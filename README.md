@@ -28,3 +28,18 @@
     - tomcat-jdbc pool
 
 </details>
+
+<details>
+<summary>DataSource</summary>
+
+* 커넥션 획득 방법
+  * JDBC DriverManager사용
+  * 커넥션 풀 사용
+* 커넥션 획득 방법을 추상화 해서 사용
+  * DataSoruce는 *커넥션 획득 방법*을 추상화 하는 인터페이스다 
+  * 커넥션 얻어오는 방법을 바꿔도 코드의 수정이 발생하지 않음
+  * 구현체마다 커넥션 얻어오는 방법 구현
+* 정리
+  * 자바는 DataSource를 통해 커넥션 획득방법을 추상화 했다.
+  * 애플리케이션 로직은 DataSource 인터페이스에만 의존하면 됨 -> DriverManagerDataSource를 통해서 DriverManager를 사용하다가 커넥션 풀을 사용하도록 코드를 변경해도 애플리케이션 로직은 변경하지 않아도 된다.
+</details>
