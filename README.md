@@ -42,4 +42,8 @@
 * 정리
   * 자바는 DataSource를 통해 커넥션 획득방법을 추상화 했다.
   * 애플리케이션 로직은 DataSource 인터페이스에만 의존하면 됨 -> DriverManagerDataSource를 통해서 DriverManager를 사용하다가 커넥션 풀을 사용하도록 코드를 변경해도 애플리케이션 로직은 변경하지 않아도 된다.
+  * 설정과 사용의 분리
+    * 설정: DataSource를 만들고 필요한 속성을 사용해서 URL, USERNAME, PASSWORD같은 부분을 입력하는 것을 말함
+    * 사용: 설정은 신경쓰지않고 DataSource의 getConnection()만 호출해서 사용
+  * 설정과 사용을 분리함에따라 객체를 설정하는 부분과, 사용하는 부분을 명확하게 분리 가능
 </details>
