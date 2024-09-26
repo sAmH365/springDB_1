@@ -1,4 +1,53 @@
 # JDBC
+
+
+### 예제 스키마
+<details>
+<summary>트랜잭션의 이해</summary>
+
+```
+ drop table member if exists;
+ create table member (
+    member_id varchar(10),
+    money integer not null default 0,
+ primary key (member_id)
+ );
+
+-- 자동커밋모드
+ set autocommit true; //자동 커밋 모드 설정
+insert into member(member_id, money) values ('data1',10000); //자동 커밋
+insert into member(member_id, money) values ('data2',10000); //자동 커밋
+
+-- 수동커밋모드
+set autocommit false; //수동 커밋 모드 설정
+insert into member(member_id, money) values ('data3',10000);
+ insert into member(member_id, money) values ('data4',10000);
+ commit; //수동 커밋
+ 
+ -- 데이터 초기화 SQL
+  //데이터 초기화
+set autocommit true;
+ delete from member;
+ insert into member(member_id, money) values ('oldId',10000);
+ 
+ -- 계좌이체 예제 초기화
+ set autocommit true;
+ delete from member;
+ insert into member(member_id, money) values ('memberA',10000);
+ insert into member(member_id, money) values ('memberB',10000);
+ 
+ -- 계좌이체 실행 SQL -성공
+  set autocommit false;
+ update member set money=10000 - 2000 where member_id = 'memberA';
+ update member set money=10000 + 2000 where member_id = 'memberB';
+ 
+ -- 계좌이체 실행 SQL - 오류
+  set autocommit false;
+ update member set money=10000 - 2000 where member_id = 'memberA'; //성공
+update member set money=10000 + 2000 where member_iddd = 'memberB'; //쿼리 예외 발생
+```
+</details>
+
 ## JDBC 이해
 <details>
 <summary>JDBC 표준 인터페이스</summary>
@@ -90,4 +139,25 @@
   * 흐름
     * 클라이언트로 SQL전달 -> 커넥션에 연결된 세션이 SQL실행 -> 세션은 트랜잭션을 시작하고 커밋 또는 롤백 -> 트랜잭션 종료
     * 사용자가 커넥션을 닫거나, DB관리자가 세션을 강제로 종료하면 세션은 종료
+</details>
+
+<details>
+<summary>트랜잭션 DB예제</summary>
+
+* Commit, Rollback
+  * 변경사항을 DB에 반영하려면 Commit, 복구하려면 Rollback
+* 흐름
+  * 사용자1이 세션1에서 트랜잭션시작 하고 신규데이터 추가하고 Commit하지 않음
+  * 사용자2는 세션2에서 신규데이터를 조회할 수 없음
+    * 세션2에서 세션1의 신규데이터를 조회할 수있다면 정합성에서 문제 발생(세션1이 Commit할지 Rollback 할지 모르니깐)
+    * READ UNCOMMITED 격리수준일때면 조회는 가능하지만 데이터정합성에 문제있을수 있음
+  * 세션1에서 Commit하면 세션2에서 조회가능, 세션1에서 Rollback하면 트랜잭션내의 모든 작업들이 rollback됨
+* 수동커밋설정
+  * 자동 커밋으로 설정하면 쿼리 실행 직후에 자동으로 커밋 호출
+  * 트랜잭션기능을 사용하려면 수동커밋으로 설정하고 진행
+  * 트랜잭션 수행시간 타임아웃
+    * DB마다 설정시간이 다름
+    * 일정시간이 지나도록 commit되지 않으면 자동 rollback
+  * 수동 커밋 모드로 설정하는 것을 '트랜잭션 시작' 한다라고 표현함
+  * * 자동커밋 모드도 내부적으로는 짧은 트랜잭션이 발생하긴한다
 </details>
