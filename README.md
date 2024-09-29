@@ -229,3 +229,13 @@ update member set money=500 where member_id = 'memberA';
     * 이럴 경우 `select for update` 구문 사용
       * 조회할때 락을 걸게 되면 변경 때와 마찬가지로 다른세션에서 해당row의 데이터를 변경할 수 없고, 락을 반납해야지 데이터의 변경이 가능하다
 </details>
+
+<details>
+<summary>트랜잭션 적용</summary>
+
+```
+-- 예외 발생 했을때 검증
+assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), memberEx.getMemberId(), 2000)).isInstanceOf(
+  IllegalStateException.class);
+```
+</details>
