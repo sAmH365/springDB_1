@@ -48,6 +48,48 @@ update member set money=10000 + 2000 where member_iddd = 'memberB'; //쿼리 예
 ```
 </details>
 
+<details>
+<summary>DB락 - 변경</summary>
+
+```
+-- 기본데이터
+set autocommit true;
+delete from member;
+insert into member(member_id, money) values ('memberA',10000);
+
+
+-- 세션1
+set autocommit false;
+update member set money=500 where member_id = 'memberA';
+
+-- 세션2
+SET LOCK_TIMEOUT 60000;
+set autocommit false;
+update member set money=1000 where member_id = 'memberA';
+
+```
+</details>
+
+<details>
+<summary>DB락 - 조회</summary>
+
+```
+-- 기본데이터
+set autocommit true;
+delete from member;
+insert into member(member_id, money) values ('memberA',10000);
+
+-- 세션1
+set autocommit false;
+select * from member where member_id='memberA' for update;
+
+-- 세션2
+set autocommit false;
+update member set money=500 where member_id = 'memberA';
+
+```
+</details>
+
 ## JDBC 이해
 <details>
 <summary>JDBC 표준 인터페이스</summary>
@@ -168,4 +210,22 @@ update member set money=10000 + 2000 where member_iddd = 'memberB'; //쿼리 예
 * 해당 로우의 락을 획득해야 데이터 변경가능
 * 락 대기 시간을 넘어가면 락 타임아웃 오류가 발생
 * 커밋으로 트랜잭션이 종료되면 락을 반납하고, 다른 세션이 해당 로우의 데이터 변경이 가능해짐
+* 실습 - DB락 변경
+  * 세션1
+    * 세션1이 트랜잭션을 시작하고 돈을 500원으로 업데이트, 아직 커밋 전
+    * `memberA` row의 락은 세션1이 가짐
+  * 세션2
+    * 세션2는 `memberA`의 데이터를 1000원으로 수정하려함
+    * 세션1이 트랜잭션을 커밋하거나 롤백하지 않았음으로, 세션2는 락을 획득하지 못해 대기하기된다
+    * `SET LOCK_TIMEOUT 60000` : 락 획득 시간을 60초로 설정한다. 60초 안에 락을 얻지 못하면 예외가 발생한
+      다.
+  * 세션2 락 획득
+    * 세션1이 커밋하게되면서 락을 반납하게되고, 대기중이던 세션2가 락을 획득하여 데이터변경이 가능해지게 된다
+* DB락 -조회
+  * 일반적으로 조회할때는 락을 걸지 않음
+    * 세션1에서 수정을 하고 있어도 세션2에서는 세션1이 데이터 수정하기 전의 row들을 전부 조회 가능
+  * 조회시에도 락이 필요할 경우가 있음
+    * 변경이 일어나는 동안 다른 세션에서 조회가 되면 안되는경우
+    * 이럴 경우 `select for update` 구문 사용
+      * 조회할때 락을 걸게 되면 변경 때와 마찬가지로 다른세션에서 해당row의 데이터를 변경할 수 없고, 락을 반납해야지 데이터의 변경이 가능하다
 </details>
