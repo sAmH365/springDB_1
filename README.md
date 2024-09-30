@@ -238,4 +238,13 @@ update member set money=500 where member_id = 'memberA';
 assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), memberEx.getMemberId(), 2000)).isInstanceOf(
   IllegalStateException.class);
 ```
+* 트랜잭션 적용시점
+  * 비즈니스 로직이 있는 서비스계층에서 시작
+  * 트랜잭션을 시작하려면 커넥션이 필요, 서비스 계층에서 커넥션을 만들고, 트랜잭션 커밋후에 커넥션을 종료해야함
+  * 애플리케이션에서 DB트랜잭션을 사용하려면 트랜잭션을 사용하는 동안 같은 커넥션을 유지해야함 -> 같은 세션사용하기위해
+* 같은 커넥션을 유지하기 위한 방법 1
+  * 커넥션을 파라미터로 전달해서 같은 커넥션이 유지되도록 함
+  * 커넥션 유지가 필요한 메서드는 리포지토리에서 커넥션을 닫으면 안된다. 리포지토리 뿐만아니라 이후에도 커넥션을 계속 이어서 사용하기 때문에, 이후 서비스 로직이 끝날 때 트랜잭션을 종료하고 닫아야 한다.
+  * 커넥션 풀 사용시
+    * 비즈니스 로직을 시작하기 전 setAutoCommit을 false로 해서 트랜잭션을 시작, 서비스로직에서 커넥션을 닫고 커넥션 풀에 반납하기전에 setAutoCommit을 true로 돌려놓고 반환
 </details>
