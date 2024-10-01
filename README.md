@@ -89,6 +89,32 @@ update member set money=500 where member_id = 'memberA';
 
 ```
 </details>
+<details>
+<summary>스프링 문제해결 - 트랜잭션 추상화</summary>
+
+```
+-- JPA 트랜잭션 코드 예시
+ public static void main(String[] args) {
+ //엔티티 매니저 팩토리 생성
+EntityManagerFactory emf = 
+Persistence.createEntityManagerFactory("jpabook");
+ EntityManager em = emf.createEntityManager(); //엔티티 매니저 생성
+EntityTransaction tx = em.getTransaction(); //트랜잭션 기능 획득
+try {
+        tx.begin(); //트랜잭션 시작
+logic(em);  //비즈니스 로직
+        tx.commit();//트랜잭션 커밋
+    } 
+    } 
+}
+ catch (Exception e) {
+        tx.rollback(); //트랜잭션 롤백
+finally {
+        em.close(); //엔티티 매니저 종료
+    }
+    emf.close(); //엔티티 매니저 팩토리 종료
+```
+</details>
 
 ## JDBC 이해
 <details>
@@ -305,4 +331,39 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
 * **스프링과 문제 해결**<br>
   스프링은 서비스 계층을 순수하게 유지하면서, 지금까지 이야기한 문제들을 해결할 수 있는 다양한 방법과 기술들을 제
   공한다
+</details>
+
+<details>
+<summary>트랜잭션 추상화</summary>
+
+* JDBC기술에 의존하고있는 서비스를 JPA나 다른 데이터 접근 기술로 변경하면, 서비스 계층의 트랜잭션 코드들도 모두 수정해야한다.
+* 구현 기술에 따른 트랜잭션 사용법
+  * JDBC: `con.setAutoCommit(false)`
+  * JPA: `transaction.begin()`
+* 어떤 기술을 사용하던지 코드의 변경을 최소화 할려면 트랜잭션을 추상화해야한다.
+  * 단일 책임 원칙
+* 스프링이 제공하는 트랜잭션 추상화 기술을 사용하면, 데이터 접근기술에 따른 트랜잭션 구현체도 대부분 만들어져있다.
+</details>
+
+<details>
+<summary>트랜잭션 동기화</summary>
+
+* 리소스 동기화
+  * 트랜잭션을 유지하려면 트랜잭션의 시작부터 끝까지 같은 데이터베이스 커넥션을 유지해아한다. 결국 같은 커넥션을 동
+    기화(맞추어 사용)하기 위해서 이전에는 파라미터로 커넥션을 전달하는 방법을 사용했다.<br>
+    파라미터로 커넥션을 전달하는 방법은 코드가 지저분해지는 것은 물론이고, 커넥션을 넘기는 메서드와 넘기지 않는 메
+    서드를 중복해서 만들어야 하는 등 여러가지 단점들이 많다
+* 스프링은 **트랜잭션 동기화 매니저**를 제공한다. 이것은 쓰레드 로컬(`ThreadLocal`)을 사용해서 커넥션을 동기화 해준다. 트랜잭션 매니저는 내부에서 이 트랜잭션 동기화 매니저를 사용한다.
+* 트랜잭션 동기화 매니저는 쓰레드 로컬을 사용하기 때문에 멀티쓰레드 상황에 안전하게 커넥션을 동기화 할 수 있
+  다.
+  * 커넥션이 필요하면 트랜잭션 동기화 매니저를 통해 커넥션을 획득
+* 동작방식
+  1. 트랜잭션을 시작하려면 커넥션이 필요, 트랜잭션 매니저는 데이터소스를 통해 커넥션을 만들고 트랜잭션을
+     시작한다.
+  2. 트랜잭션 매니저는 트랜잭션이 시작된 커넥션을 트랜잭션 동기화 매니저에 보관하낟.
+  3. 리포지토리는 트랜잭션 동기화 매니저에 보관된 커넥션을 꺼내서 사용한다. (파라미터로 커넥션을 전달 안해도 됨)
+  4. 트랜잭션이 종료되면 트랜잭션 매니저는 트랜잭션 동기화 매니저에 보관된 커넥션을 통해 트랜잭션을 종료하고, 커넥션도 닫는다.
+* ThreadLocal 참고
+  * 쓰레드 로컬을 사용하면 각각의 쓰레드마다 별도의 저장소가 부여된다. 따라서 해당 쓰레드만 해당 데이터에 접근할 수 있다.
+    * `스프링 핵심 원리 - 고급편` 강의 참고
 </details>
