@@ -403,3 +403,26 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
   * 언체크 예외가 발생하면 롤백한다. 그 외의 경우 커밋한다.
 
 </details>
+
+## 스프링과 문제 해결 - 트랜잭션 AOP 이해
+<details>
+<summary>프록시 도입</summary>
+
+* 프록시를 사용하면 트랜잭션을 처리하는 객체와 비즈니스 로직을 처리하는 서비스 객체를 명확하게 분리 가능
+  * 프록시는 대리인,대리자 라는뜻
+  * 프록시가 트랜잭션의 시작과 끝을 맡아서 처리해줌
+* 프록시 도입 전: 서비스에 비즈니스 로직과 트랜잭션 처리 로직이 함께 섞여있다.
+* 프록시 도입 후: 트랜잭션 프록시가 트랜잭션 처리 로직을 모두 가져간다.<br>
+  트랜잭션을 시작한 후에 실제 서비스를 대신 호출한다. 트랜잭션 프록시 덕분에 서비스 계층에는 순수한 비즈니스 로직만 남길 수 있다.
+</details>
+<details>
+<summary>스프링이 제공하는 트랜잭션 AOP</summary>
+
+* 스프링이 제공하는 AOP기능을 사용하면 프록시를 매우 편리하게 적용할 수 있다.
+* 직접 스프링AOP를 사용해서 트랜잭션을 처리해도 되지만, 스프링은 트랜잭션 AOP를 처리하기 위한 모든 기능을 제공되고, AOP를 처리하기 위해 필요한 스프링 빈들도 자동으로 등록시켜준다.
+  * AOP처리위한 클래스
+    * 어드바이저: `BeanFacttoryTransactionAttributeSourceAdvisor`
+    * 포인트컷: `TransactionAttributeSourcePointcut`
+    * 어드바이스: `TransactionInterceptor`
+* 개발자는 `@Transactional` 애노테이션만 붙여주면된다.
+</details>
