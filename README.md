@@ -391,3 +391,15 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
     * `con.close()`를 호출해서 커넥션을 종료한다. 커넥션 풀을 사용하는 경우 `con.close()`를 호출하면 커넥션 풀에 반환된다.
 
 </details>
+
+<details>
+<summary>트랜잭션 템플릿</summary>
+
+* 템플릿 콜백 패턴을 적용하려면 템플릿을 제공하는 클래스를 작성해야 하는데, 스프링은 `TransactionTemplate`라는 템플릿 클래스를 제공한다.
+* `execute()`: 응답값이 있을 때 사용
+* `executeWithResult()`: 응답값 없을 때 사용
+* 기본 동작
+  * 비즈니스 로직이 정상 수행되면 커밋한다.
+  * 언체크 예외가 발생하면 롤백한다. 그 외의 경우 커밋한다.
+
+</details>
