@@ -57,8 +57,9 @@ public class MemberRepositoryV3 {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 
-    con = DBConnectionUtil.getConnection();
+
     try {
+      con = getConnection();
       pstmt = con.prepareStatement(sql);
 
       pstmt.setString(1, memberId);
@@ -89,7 +90,7 @@ public class MemberRepositoryV3 {
     PreparedStatement pstmt = null;
 
     try {
-      con = DBConnectionUtil.getConnection();
+      con = getConnection();
       pstmt = con.prepareStatement(sql);
       pstmt.setInt(1, money);
       pstmt.setString(2, memberId);
