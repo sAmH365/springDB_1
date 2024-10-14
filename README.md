@@ -458,4 +458,21 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
     * JDBC기술을 사용하면 -> `DataSourceTransactionManager`
     * JPA기술을 사용하면 -> `JpaTranscationManager`, `JpaTransactionManager`는 `DataSourceTransactionManager`가 제공하는 기능도 대부분 지원 
 </details>
+## 자바 예외 이해
+<details>
+<summary>예외 계층</summary>
 
+* `Object`: 최상위 객체, 자바에서는 예외도 객체로 취급
+* `Throwable`: 최상위 예외, `Exception`, `Error`로 나뉨
+  * `Error`는 시스템 오류에 관한 오류이기 때문에 발생한 시점에 이미 복구 불가 -> 잡으려고 하면 안됨
+  * `catch`로 `Throwable`을 잡으려하면 `Error`도 같이 잡히기 때문에 개발자는 `Excepction` 부터 필요한 예외로 생각하면 잡으면 된다.
+* `Exception`: 체크예외
+  * 애플리케이션 로직에서 사용할 수 있는 실질적인 최상위 예외
+  * `Exception`과 그 하위 예외는 모두 컴파일러가 체크하는 체크 예외이다. 단 `RuntimeException`은 예외로 한다.
+  * 예외처리를 하지 않으면 컴파일 에러가 발생
+* `RuntimeException`: 언체크 예외, 런타임 예외
+  * 컴파일러가 체크 하지 않는 언체크 예외
+  * `RuntimeException`과 그 자식 예외는 모두 언체크 예외, 대표적으로 `NullPointerException`, `IllegalArgumentException`
+    * 예외 처리를 강제하지 않음 -> 예외처리를 하지 않아도 컴파일에러가 발생하지 않는다.
+    * 주로 프로그래밍 오류로 인해 발생
+</details>
