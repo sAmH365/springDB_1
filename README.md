@@ -438,4 +438,24 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
 * 선언적 트랜잭션 관리가 프로그래밍 방식에 비해 훨씬 간편하고 실용적이여서 대부분 선언적 트랜잭션 관리를 사용한다.
 * 프로그래밍 방식 트랜잭션 관리는 테스트 시에 가끔 사용될 때도 있다.
 </details>
+<details>
+<summary>스프링 부트의 자동 리소스 등록</summary>
+
+* 스프링 부트 등장 이전에는 데이터소스와 트랜잭션 매니저를 개발자가 직접 스프링 빈으로 등록해서 사용
+  * `@Bean`을 사용한 자바코드로 등록하는 방법도 있고
+  * 더 예전으로 올라가면 XML로 관리하는 방법도 있다
+* 데이터소스 - 자동 등록
+  * 자동으로 등록되는 스프링 빈 이름: `dataSoruce`
+  * 개발자가 직접 데이터소스를 빈으로 등록하면 스프링 부트는 데이터소스를 자동으로 등록하지 않는다
+  * 스프링 부트는 `application.properties` or `application.yml` 에 있는 속성을 사용해서 `DataSource` 를 생성한다.
+  * 스프링 붙으가 기본으로 생성하는 데이터소스는 커넥션풀을 제공하는 `HikariDataSource`다
+  * `spring.datasource.url`속성이 없으면 내장 데이터베이스(메모리DB)를 생성하려고 시도한다.
+* 트랜잭션 매니저 - 자동등록
+  * 스프링 부트는 적절한 트랜잭션 매니저 `PlatformTransactionManager`를 자동으로 스프링 빈에 등록한다 
+  * 자동으로 등록되는 스프링 빈 이름: `transactionManager`
+  * 개발자가 직접 트랜잭션 매니저를 빈드로 등록하면 스프링 부트는 트랜잭션 매니저를 자동으록 등록하지 않는다
+  * 어떤 트랜잭션 매니저를 선택할지는 현재 등록된 라이브러리를 보고 판단
+    * JDBC기술을 사용하면 -> `DataSourceTransactionManager`
+    * JPA기술을 사용하면 -> `JpaTranscationManager`, `JpaTransactionManager`는 `DataSourceTransactionManager`가 제공하는 기능도 대부분 지원 
+</details>
 
