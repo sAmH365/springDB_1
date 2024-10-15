@@ -458,6 +458,7 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
     * JDBC기술을 사용하면 -> `DataSourceTransactionManager`
     * JPA기술을 사용하면 -> `JpaTranscationManager`, `JpaTransactionManager`는 `DataSourceTransactionManager`가 제공하는 기능도 대부분 지원 
 </details>
+
 ## 자바 예외 이해
 <details>
 <summary>예외 계층</summary>
@@ -475,4 +476,15 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
   * `RuntimeException`과 그 자식 예외는 모두 언체크 예외, 대표적으로 `NullPointerException`, `IllegalArgumentException`
     * 예외 처리를 강제하지 않음 -> 예외처리를 하지 않아도 컴파일에러가 발생하지 않는다.
     * 주로 프로그래밍 오류로 인해 발생
+</details>
+<details>
+<summary>예외 기본 규칙</summary>
+
+1. 예외는 잡아서 처리하거나 던져야 한다.
+2. 예외를 잡거나 던질 때 지정한 예외뿐만 아니라 그 예외의 자식들도 함께 처리된다.
+
+* 참고: 예외를 처리하지 못하고 계속 던지면?
+  * 자바 `main()`쓰레드의 경우 예외로그를 출력하면서 시스템이 종료
+  * 웹 애플리케이션의 경우 여러 사용자의 요청을 처리하기 때문에 하나의 예외때문에 시스템이 종료되면 안된다.<br>
+  WAS가 해당 예외를 받아서 처리하는데, 주로 사용자에게 개발자가 지정한, 오류 페이지를 보여준다.
 </details>
