@@ -522,4 +522,11 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
     * 그렇다면 대안은?
       * uncheck 예외 활용
 </details>
+<details>
+<summary>언체크 예외 활용</summary>
+
+* `SQLException`을 런타임 예외인 `RuntimeSQLException`으로 변환
+* 런타임 예외이기 때문에 서비스, 컨트롤러는 해당 예외들을 처리할 수 없다면 별도의 선언 없이 그냥 두면 된다.
+</details>
+
 
