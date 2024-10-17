@@ -528,5 +528,12 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
 * `SQLException`을 런타임 예외인 `RuntimeSQLException`으로 변환
 * 런타임 예외이기 때문에 서비스, 컨트롤러는 해당 예외들을 처리할 수 없다면 별도의 선언 없이 그냥 두면 된다.
 </details>
+<details>
+<summary>예외 포함과 스택 트레이스</summary>
+
+* 예외를 전환할 때는 꼭 기존 예외를 포함해야한다. 그렇지 않으면 스택 트레이스를 확인할 때 심각한 문제가 발생
+* 로그를 출력할 때 마지막 파라미터에 예외를 넣어주면 로그에 스택트레이스를 출력할 수 있다.
+  * `log.info("message={}", message, e)`
+</details>
 
 
