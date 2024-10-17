@@ -19,7 +19,7 @@ import org.springframework.jdbc.support.JdbcUtils;
  * DataSourceUtils.releaseConnection() :: 커넥션 닫을때 사용
  */
 @Slf4j
-public class MemberRepositoryV3 {
+public class MemberRepositoryV3 implements MemberRepositoryEx {
 
   private final DataSource dataSource;
 

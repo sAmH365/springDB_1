@@ -536,4 +536,12 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
   * `log.info("message={}", message, e)`
 </details>
 
+## 스프링과 문제해결 - 예외처리, 반복
+<details>
+<summary>체크예외와 인터페이스</summary>
+
+* 서비스 계층은 가급적 특정 구현 기술에 의존하지 않고, 순수하게 유지하는 것이 좋다. 이렇게 하려면 예외에 대한 의존도 함께 해결해야한다.
+* 예를 들어서 서비스가 처리할 수 없는 `SQLException`의 경우 리포지토리가 던지는 `SQLException` 체크 예외를 런타임 예외로 전환해서 서비스 계층에 던지자.<br>
+이렇게 하면 서비스 계층이 해당 예외를 무시할 수 있기 때문에, 특정 구현 기술에 의존하는 부분을 제거하고 서비스 계층을 순수하게 유지할 수 있다.
+</details>
 
