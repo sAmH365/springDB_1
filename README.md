@@ -547,4 +547,20 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
   * 리포지토리에서 넘오는 특정한 예외의 경우 복구를 시도할 수도 있다. 그런데 지금 방식은 항상 `MyDbException`이라는 예외만 넘어오기 때문에 예외를 구분할 수 없는 단점이 있다.
   * 만약 특정 상황에는 예외를 잡아서 복구하고 싶으면 예외를 어떻게 구분해서 처리할 수 있을까?
 </details>
+<details>
+<summary>데이터 접근 예외 직접 만들기</summary>
+
+* 데이터베이스 오류에 따라서 특정 예외는 복구하고 싶을 수 있다.
+  * DB에 같은 ID가 있으면 뒤에 숫자를 붙여 새로운 ID를 만드는 경우
+  * 데이터를 DB에 저장할 때 같은 ID가 있으면 데이터 베이스는 오류를 반환하고, 오류코드를 받은 JDBC 드라이버는 `SQLException`을 던진다.<br>
+  그리고 `SQLException`에는 데이터베이스가 제공하는 `errorCode`라는 것이 들어있다.
+* 오류코드를 활용하기 위해 `SQLException`을 서비스 계층으로 다시 던지게 되면, 서비스 계층이 `SQLException`이라는 JDBC기술에 의존하게 되면서, 지금까지 고민했던 서비스 계층의 순수성이 무너진다.
+  * 이 문제를 해결하려면 앞서 배운 것처럼 리포지토리에서 예외를 변환해서 던지면 된다.
+    * `SQLException` -> `MyDuplicateKeyException`
+* 남은 문제
+  * `SQL ErrorCode`는 각각의 데이터베이스 마다 다르다. 결과적으로 데이터베이스가 변경될 때마다 ErrorCode도 모두 변경해야 한다.
+  * 데이터베이스가 전달하는 오류는 키 중복 뿐만 아니라 락이 걸린경우, SQL문법에 오류가 있는 경우 등등 수십가지 오류 코드가 있다.<br>
+  이 모든 상황에 맞는 예외를 지금 처럼 다 만들수는 없다.
+  * (스프링이 다 해결해줌...)
+</details>
 
