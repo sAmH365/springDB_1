@@ -563,4 +563,18 @@ assertThatThrownBy(() -> memberService.accountTransfer(memberA.getMemberId(), me
   이 모든 상황에 맞는 예외를 지금 처럼 다 만들수는 없다.
   * (스프링이 다 해결해줌...)
 </details>
+<details>
+<summary>스프링 에외 추상화 이해</summary>
+
+* 스프링은 데이터 접근 계층에 대한 수십가지 예외를 정리해서 일관된 예외 계층을 제공
+* 각각의 예외는 특정 기술에 종속적이지 않게 설계되어 있다. 따라서 서비스 계층에서도 스프링이 제공하는 예외를 사용한면 된다.
+* 스프링 예외의 최상위는 `org.springframework.dao.DataAccessException`이다. 때문에 스프링이 제공하는 데이터 접근 계층의 모든 예외는 런타임 예외이다.
+* `DataAccessException`은 크게 2가지로 구분하는데 `NonTransient`예외와 `Trasient`예외이다.
+  * `Trasient(일시적인)`: `Trasient` 하위 예외는 동일한SQL을 다시 시도했을 때 성공 가능이 있는 예외
+    * 쿼리타임아웃, 락과관련된 오류들처럼 데이터 베이스 상태가 좋아지거나, 락이 풀렸을 때 다시 시도하면 성공할 수도 있다.
+  * `NonTrasient`: 일시적이지 않다는 뜻, 같은 SQL을 그대로 반복해서 실행하면 실패한다.
+    * SQL문법오류, 데이터베이스 제약조건 위배등
+* 스프링이 제공하는 예외 변환기
+  * 스프링은 데이터베이스에서 발생하는 오류 코드를 스프링이 정의한 예외로 자동으로 변환해주는 변환기를 제공한다.
+</details>
 
